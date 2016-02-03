@@ -1,54 +1,56 @@
 /* global it */
 
-var assert = require('assert');
-var expressCo = require('./index')(require('express'));
-var request = require('supertest');
+'use strict';
 
-it('should accept generator as middleware', function (done) {
-	var app = expressCo();
+const assert = require('assert');
+const expressGenerators = require('./index')(require('express'));
+const request = require('supertest');
 
-	app.get('/', function* (req, res) {
+it('accepts generator as middleware', done => {
+	const app = expressGenerators();
+
+	app.get('/', function * (req, res) {
 		res.send('it works!');
 	});
 
 	request(app)
 		.get('/')
-		.end(function (err, res) {
+		.end((err, res) => {
 			assert.ifError(err);
 			assert.equal(res.text, 'it works!');
 			done();
 		});
 });
 
-it('should not call next middleware after res.send', function (done) {
-	var app = expressCo();
+it('does not call next middleware after res.send', done => {
+	const app = expressGenerators();
 
-	app.get('/', function* (req, res) {
+	app.get('/', function * (req, res) {
 		res.send('one');
 	});
 
-	app.get('/', function* (req, res) {
+	app.get('/', function * (req, res) {
 		res.send('two');
 	});
 
 	request(app)
 		.get('/')
-		.end(function (err, res) {
+		.end((err, res) => {
 			assert.ifError(err);
 			assert.equal(res.text, 'one');
 			done();
 		});
 });
 
-it('should pass throwed exception to error handler', function (done) {
-	var app = expressCo();
+it('pass throwed exception to error handler', done => {
+	const app = expressGenerators();
 
-	app.get('/', function* () {
+	app.get('/', function * () {
 		throw new Error('Bang!');
 	});
 
 	/* eslint-disable no-unused-vars */
-	app.use(function (err, req, res, next) {
+	app.use((err, req, res, next) => {
 		assert.equal(err.message, 'Bang!');
 		res.sendStatus(500);
 		next();
@@ -58,30 +60,30 @@ it('should pass throwed exception to error handler', function (done) {
 	request(app).get('/').expect(500, done);
 });
 
-it('should work with param method', function (done) {
-	var app = expressCo();
+it('works with param method', done => {
+	const app = expressGenerators();
 
-	app.param('user', function* (req, res, id) {
+	app.param('user', function * (req, res, id) {
 		assert.equal(id, 42);
 	});
 
-	app.get('/:user', function* (req, res) {
+	app.get('/:user', function * (req, res) {
 		res.send('meh');
 	});
 
 	request(app).get('/42').expect(200, done);
 });
 
-it('should accept old function as middleware', function (done) {
-	var app = expressCo();
+it('accepts old function as middleware', done => {
+	const app = expressGenerators();
 
-	app.get('/', function (req, res) {
+	app.get('/', (req, res) => {
 		res.send('it works!');
 	});
 
 	request(app)
 		.get('/')
-		.end(function (err, res) {
+		.end((err, res) => {
 			assert.ifError(err);
 			assert.equal(res.text, 'it works!');
 			done();

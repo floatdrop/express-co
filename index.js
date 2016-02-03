@@ -1,30 +1,28 @@
-var co = require('co');
-var methods = require('methods');
-var slice = Array.prototype.slice;
-var isGenerator = require('is-generator');
+'use strict';
+
+const co = require('co');
+const methods = require('methods');
+const slice = Array.prototype.slice;
+const isGenerator = require('is-generator');
 
 module.exports = function (express) {
-	function coexpress() {
-		var app = express();
-		wrap(app);
-		return app;
+	function expressGenerators() {
+		return wrap(express());
 	}
 
-	coexpress.prototype = express;
+	expressGenerators.prototype = express;
 
 	if (express.Router) {
-		coexpress.Router = function () {
-			var router = new express.Router();
-			wrap(router);
-			return router;
+		expressGenerators.Router = function () {
+			return wrap(new express.Router());
 		};
 	}
 
-	return coexpress;
+	return expressGenerators;
 };
 
 function wrap(app) {
-	methods.forEach(function (method) {
+	methods.forEach(method => {
 		app[method] = wrapAppMethod(app[method]);
 	});
 
@@ -32,6 +30,8 @@ function wrap(app) {
 	app.use = wrapAppMethod(app.use);
 	app.all = wrapAppMethod(app.all);
 	app.del = app.delete;
+
+	return app;
 }
 
 function wrapAppMethod(route) {
@@ -42,7 +42,7 @@ function wrapAppMethod(route) {
 
 function wrapParamMethod(route) {
 	return function (name, fn) {
-		var cb = fn;
+		let cb = fn;
 
 		if (isGenerator.fn(fn)) {
 			cb = function (req, res, next, id) {
