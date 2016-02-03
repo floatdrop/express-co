@@ -1,7 +1,7 @@
 {
   "name": "express-generators",
   "description": "Use generators with express",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "license": "MIT",
   "main": "index",
   "repository": {
@@ -34,6 +34,6 @@
     "xo": "^0.12.1"
   },
   "xo": {
-      "esnext": true
+    "esnext": true
   }
 }
