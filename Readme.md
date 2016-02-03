@@ -16,7 +16,7 @@ const got = require('got');
 
 const app = express();
 
-app.get('/user/:id', function* (req, res) {
+app.get('/user/:id', function * (req, res) {
     const google = (yield got('google.com')).body;
     res.send(google);
 });
