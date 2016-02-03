@@ -74,6 +74,23 @@ it('works with param method', done => {
 	request(app).get('/42').expect(200, done);
 });
 
+it('works with app.route call', done => {
+	const app = expressGenerators();
+
+	app.route('/')
+		.get(function * (req, res) {
+			res.send('it works!');
+		});
+
+	request(app)
+		.get('/')
+		.end((err, res) => {
+			assert.ifError(err);
+			assert.equal(res.text, 'it works!');
+			done();
+		});
+});
+
 it('accepts old function as middleware', done => {
 	const app = expressGenerators();
 

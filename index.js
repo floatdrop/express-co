@@ -31,6 +31,11 @@ function wrap(app) {
 	app.all = wrapAppMethod(app.all);
 	app.del = app.delete;
 
+	const _route = app.route;
+	app.route = function () {
+		return wrap(_route.apply(this, arguments));
+	};
+
 	return app;
 }
 
