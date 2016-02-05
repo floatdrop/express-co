@@ -27,7 +27,7 @@ app.use('/generator', function * (req, res) {
     req.google = yield got('google.com');
 });
 
-app.get('/', function * (req, res) {
+app.get('*', function * (req, res) {
     res.send(req.google.body);
 });
 
@@ -52,8 +52,6 @@ Following methods are wrapped to support generators:
 ## Notes
 
 Rather than using the `next()` method, `express-generators` detects if you have written to the response.
-
-If you want to proceed to another route (with `next('/newroute')`) – just return `'/newroute'` from generator.
 
 ## License
 
