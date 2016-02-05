@@ -16,18 +16,45 @@ const got = require('got');
 
 const app = express();
 
-app.get('/user/:id', function * (req, res) {
-    const google = (yield got('google.com')).body;
-    res.send(google);
+app.use('/callback', function (req, res, next) {
+    got('google.com').then(r => {
+        req.google = r;
+        next();
+    }, next);
+});
+
+app.use('/generator', function * (req, res) {
+    req.google = yield got('google.com');
+});
+
+app.get('/', function * (req, res) {
+    res.send(req.google.body);
 });
 
 app.listen(8000);
 ```
 
+## API
+
+### expressGenerators(express)
+
+Returns patched Express constructor with patched `Router` class.
+
+Following methods are wrapped to support generators:
+
+- `app.get`, `app.post` and [other methods](https://github.com/jshttp/methods/blob/master/index.js#L42-L67) from [`methods`](https://www.npmjs.com/package/methods) package
+- `app.use`
+- `app.param`
+- `app.route`
+- `app.all`
+- `app.del`
+
 ## Notes
 
 Rather than using the `next()` method, `express-generators` detects if you have written to the response.
 
-## license
+If you want to proceed to another route (with `next('/newroute')`) – just return `'/newroute'` from generator.
+
+## License
 
 MIT © Vsevolod Strukchinsky
