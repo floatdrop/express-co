@@ -11,10 +11,11 @@ npm install express-generators
 ## Usage
 
 ```javascript
-const express = require('express-generators')(require('express'));
+const express = require('express');
+const expressGenerators = require('express-generators')(express);
 const got = require('got');
 
-const app = express();
+const app = expressGenerators();
 
 app.use('/callback', function (req, res, next) {
     got('google.com').then(r => {
