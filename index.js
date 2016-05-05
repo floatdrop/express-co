@@ -12,6 +12,8 @@ module.exports = function (express) {
 
 	expressGenerators.prototype = express;
 
+	Object.assign(expressGenerators, express);
+
 	if (express.Router) {
 		expressGenerators.Router = function () {
 			return wrap(new express.Router());

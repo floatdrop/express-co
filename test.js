@@ -106,3 +106,7 @@ it('accepts old function as middleware', done => {
 			done();
 		});
 });
+
+it('has static method', () => {
+	assert.equal(typeof expressGenerators.static, 'function');
+});
